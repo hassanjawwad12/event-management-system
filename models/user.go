@@ -1,6 +1,11 @@
 package models
 
-import "github.com/hassanjawwad12/event-management-system/db"
+import (
+	"fmt"
+
+	"github.com/hassanjawwad12/event-management-system/db"
+	"github.com/hassanjawwad12/event-management-system/utils"
+)
 
 type User struct {
 	ID       int64
@@ -18,7 +23,12 @@ func (u User) Save() error {
 
 	defer stmt.Close()
 
-	result, err := stmt.Exec(u.Email, u.Password)
+	securePwd, err := utils.HashPassword(u.Password)
+	if err != nil {
+		return err
+	}
+	fmt.Println("securePwd", securePwd)
+	result, err := stmt.Exec(u.Email, securePwd)
 
 	if err != nil {
 		return err
