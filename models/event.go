@@ -14,11 +14,11 @@ type Event struct {
 	Description string    `json:"description"  binding:"required"`
 	Location    string    `json:"location"  binding:"required"`
 	DateTime    time.Time `json:"date_time"  binding:"required"`
-	UserId      int
+	UserId      int64
 }
 
 // store it in the database
-func (e Event) Save() error {
+func (e *Event) Save() error {
 	query := `
 	INSERT INTO events (name, description, location, date_time, user_id) 
 	VALUES (?, ?, ?, ?, ?)`
@@ -111,7 +111,7 @@ func (event Event) Update() error {
 }
 
 // Delete deletes the event with the given ID
-func Delete(id int64) error {
+func (event Event) Delete() error {
 	query := "DELETE FROM events WHERE id = ?"
 	stmt, err := db.DB.Prepare(query)
 
@@ -121,6 +121,6 @@ func Delete(id int64) error {
 
 	defer stmt.Close()
 
-	_, err = stmt.Exec(id)
+	_, err = stmt.Exec(event.ID)
 	return err
 }
