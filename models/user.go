@@ -1,7 +1,7 @@
 package models
 
 import (
-	"fmt"
+	"errors"
 
 	"github.com/hassanjawwad12/event-management-system/db"
 	"github.com/hassanjawwad12/event-management-system/utils"
@@ -27,7 +27,6 @@ func (u User) Save() error {
 	if err != nil {
 		return err
 	}
-	fmt.Println("securePwd", securePwd)
 	result, err := stmt.Exec(u.Email, securePwd)
 
 	if err != nil {
@@ -38,4 +37,24 @@ func (u User) Save() error {
 
 	u.ID = userId
 	return err
+}
+
+func (u User) ValidateCredentials() error {
+	query := "SELECT id, password FROM users WHERE email = ?"
+	row := db.DB.QueryRow(query, u.Email)
+
+	var retrievedPassword string
+	err := row.Scan(&u.ID, &retrievedPassword)
+
+	if err != nil {
+		return errors.New("credentials invalid")
+	}
+
+	passwordIsValid := utils.CheckPasswordHash(u.Password, retrievedPassword)
+
+	if !passwordIsValid {
+		return errors.New("credentials invalid")
+	}
+
+	return nil
 }
