@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"github.com/hassanjawwad12/event-management-system/db"
 	"github.com/hassanjawwad12/event-management-system/models"
 )
 
@@ -28,6 +29,7 @@ func createEvent(context *gin.Context) {
 }
 
 func main() {
+	db.InitDb()
 	server := gin.Default()
 
 	server.GET("/events", getEvents)
