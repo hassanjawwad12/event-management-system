@@ -41,6 +41,7 @@ func (e Event) Save() error {
 	return err
 }
 
+// GetAllEvents returns all events from the database
 func GetAllEvents() ([]Event, error) {
 	// simple query thats why we did not prepare it
 	query := `SELECT * FROM events`
@@ -76,6 +77,7 @@ func GetAllEvents() ([]Event, error) {
 	return events, nil
 }
 
+// GetEventByID returns the event with the given ID
 func GetEventByID(id int64) (*Event, error) {
 	query := "SELECT * FROM events WHERE id = ?"
 	row := db.DB.QueryRow(query, id)
@@ -89,6 +91,7 @@ func GetEventByID(id int64) (*Event, error) {
 	return &event, nil
 }
 
+// Update updates the event in the database
 func (event Event) Update() error {
 	query := `
 	UPDATE events
@@ -107,6 +110,7 @@ func (event Event) Update() error {
 	return err
 }
 
+// Delete deletes the event with the given ID
 func Delete(id int64) error {
 	query := "DELETE FROM events WHERE id = ?"
 	stmt, err := db.DB.Prepare(query)
