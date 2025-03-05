@@ -6,6 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/hassanjawwad12/event-management-system/models"
+	"github.com/hassanjawwad12/event-management-system/utils"
 )
 
 // GetEvents fetches all events from the database and returns them as a JSON response.
@@ -21,9 +22,22 @@ func GetEvents(context *gin.Context) {
 
 // CreateEvent creates a new event in the database and returns the created event as a JSON response.
 func CreateEvent(context *gin.Context) {
+	// check if the token is available in the header
+	token := context.GetHeader("Authorization")
+	if token == "" {
+		context.JSON(http.StatusUnauthorized, gin.H{"message": "Authorization token is required."})
+		return
+	}
+
+	err := utils.VerifyToken(token)
+
+	if err != nil {
+		context.JSON(http.StatusUnauthorized, gin.H{"message": "Not authorized."})
+		return
+	}
+
 	var event models.Event
-	// store data from incoming body to event struct
-	err := context.ShouldBindJSON(&event)
+	err = context.ShouldBindJSON(&event) // store data from incoming body to event struct
 	if err != nil {
 		context.JSON(http.StatusBadRequest, gin.H{"error": "Could not parse Req Data"})
 		return
@@ -31,13 +45,17 @@ func CreateEvent(context *gin.Context) {
 	event.ID = 1
 	event.UserId = 1
 
-	err = event.Save()
+	err = saveEvent(&event)
 
 	if err != nil {
 		context.JSON(http.StatusInternalServerError, gin.H{"error": "Could not save event"})
 		return
 	}
 	context.JSON(http.StatusCreated, gin.H{"message": "Event created successfully", "event": event})
+}
+
+func saveEvent(event *models.Event) error {
+	return event.Save()
 }
 
 // GetEventById fetches a specific event based on id

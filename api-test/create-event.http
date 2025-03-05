@@ -1,8 +1,9 @@
 POST http://localhost:8080/events
 content-type: application/json
+authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Imhhc3NhbkBleGFtcGxlLmNvbSIsImV4cCI6MTc0MTE3NTI5OSwidXNlcklkIjowfQ.TxsRm4i53eXnL5NvXhWCLba1kEqIKbceQ5QeAHDw94A
 
 {
-  "name": "Test event B",
+  "name": "Football Match",
   "description": "A test event B",
   "location": "A test location",
   "date_time": "2025-01-01T15:30:00.000Z"
